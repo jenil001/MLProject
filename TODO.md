@@ -1,0 +1,2 @@
+- [x] Modify app2.py to pass form data back to template
+- [x] Update home.html to repopulate form fields and add auto-scroll to result

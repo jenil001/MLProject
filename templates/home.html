@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Exam Performance Prediction</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 2rem 0;
+        }
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-title {
+            color: #333;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .btn-submit {
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 25px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .result-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .result-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <h1 class="form-title">Student Exam Performance Indicator</h1>
+            <form action="{{ url_for('predict_datapoint')}}" method="post" onsubmit="sessionStorage.setItem('preSubmitScroll', window.pageYOffset);">
+                <legend class="visually-hidden">Student Exam Performance Prediction</legend>
+                <div class="mb-3">
+                    <label for="gender" class="form-label fw-bold">Gender</label>
+                    <select class="form-select" id="gender" name="gender" required>
+                        <option selected disabled value="">Select your Gender</option>
+                        <option value="male" {% if form_data.get('gender') == 'male' %}selected{% endif %}>Male</option>
+                        <option value="female" {% if form_data.get('gender') == 'female' %}selected{% endif %}>Female</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="ethnicity" class="form-label fw-bold">Race or Ethnicity</label>
+                    <select class="form-select" id="ethnicity" name="ethnicity" required>
+                        <option selected disabled value="">Select Ethnicity</option>
+                        <option value="group A" {% if form_data.get('ethnicity') == 'group A' %}selected{% endif %}>Group A</option>
+                        <option value="group B" {% if form_data.get('ethnicity') == 'group B' %}selected{% endif %}>Group B</option>
+                        <option value="group C" {% if form_data.get('ethnicity') == 'group C' %}selected{% endif %}>Group C</option>
+                        <option value="group D" {% if form_data.get('ethnicity') == 'group D' %}selected{% endif %}>Group D</option>
+                        <option value="group E" {% if form_data.get('ethnicity') == 'group E' %}selected{% endif %}>Group E</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="parental_level_of_education" class="form-label fw-bold">Parental Level of Education</label>
+                    <select class="form-select" id="parental_level_of_education" name="parental_level_of_education" required>
+                        <option selected disabled value="">Select Parent Education</option>
+                        <option value="associate's degree" {% if form_data.get('parental_level_of_education') == "associate's degree" %}selected{% endif %}>associate's degree</option>
+                        <option value="bachelor's degree" {% if form_data.get('parental_level_of_education') == "bachelor's degree" %}selected{% endif %}>bachelor's degree</option>
+                        <option value="high school" {% if form_data.get('parental_level_of_education') == 'high school' %}selected{% endif %}>high school</option>
+                        <option value="master's degree" {% if form_data.get('parental_level_of_education') == "master's degree" %}selected{% endif %}>master's degree</option>
+                        <option value="some college" {% if form_data.get('parental_level_of_education') == 'some college' %}selected{% endif %}>some college</option>
+                        <option value="some high school" {% if form_data.get('parental_level_of_education') == 'some high school' %}selected{% endif %}>some high school</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="lunch" class="form-label fw-bold">Lunch Type</label>
+                    <select class="form-select" id="lunch" name="lunch" required>
+                        <option selected disabled value="">Select Lunch Type</option>
+                        <option value="free/reduced" {% if form_data.get('lunch') == 'free/reduced' %}selected{% endif %}>free/reduced</option>
+                        <option value="standard" {% if form_data.get('lunch') == 'standard' %}selected{% endif %}>standard</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="test_preparation_course" class="form-label fw-bold">Test Preparation Course</label>
+                    <select class="form-select" id="test_preparation_course" name="test_preparation_course" required>
+                        <option selected disabled value="">Select Test Course</option>
+                        <option value="none" {% if form_data.get('test_preparation_course') == 'none' %}selected{% endif %}>None</option>
+                        <option value="completed" {% if form_data.get('test_preparation_course') == 'completed' %}selected{% endif %}>Completed</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="reading_score" class="form-label fw-bold">Writing Score out of 100</label>
+                    <input class="form-control" type="text" id="reading_score" name="reading_score" placeholder="Enter your Writing score (0-100)" inputmode="numeric" pattern="[0-9]*" autocomplete="off" value="{{ form_data.get('reading_score', '') }}" required />
+                </div>
+                <div class="mb-3">
+                    <label for="writing_score" class="form-label fw-bold">Reading Score out of 100</label>
+                    <input class="form-control" type="text" id="writing_score" name="writing_score" placeholder="Enter your Reading Score (0-100)" inputmode="numeric" pattern="[0-9]*" autocomplete="off" value="{{ form_data.get('writing_score', '') }}" required />
+                </div>
+                <div class="mb-3">
+                    <button class="btn btn-submit" type="submit">Predict your Maths Score</button>
+                </div>
+            </form>
+            {% if results is defined %}
+            <div class="result-card">
+                <h2 class="result-text">Predicted Maths Score: {{ results }}</h2>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Restore scroll position after prediction to avoid jumping to top
+            if ('{{ results is defined }}' === 'True') {
+                const savedScroll = sessionStorage.getItem('preSubmitScroll');
+                if (savedScroll) {
+                    window.scrollTo(0, parseInt(savedScroll));
+                    sessionStorage.removeItem('preSubmitScroll');
+                }
+            }
+
+            // Enforce numeric input only for score fields and validate range
+            const scoreInputs = ['reading_score', 'writing_score'];
+            scoreInputs.forEach(id => {
+                const input = document.getElementById(id);
+                if (input) {
+                    input.addEventListener('input', function(e) {
+                        // Allow only numbers
+                        this.value = this.value.replace(/[^0-9]/g, '');
+                        // Enforce max 100
+                        if (this.value > 100) {
+                            this.value = 100;
+                        }
+                    });
+                    // Validate on blur
+                    input.addEventListener('blur', function() {
+                        const val = parseInt(this.value) || 0;
+                        if (val < 0 || val > 100) {
+                            this.setCustomValidity('Please enter a number between 0 and 100');
+                        } else {
+                            this.setCustomValidity('');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
