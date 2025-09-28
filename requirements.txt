@@ -9,4 +9,3 @@ lightgbm
 catboost
 #-e .
 dill
-gunicorn
